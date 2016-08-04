@@ -10,15 +10,17 @@
 </head>
 
 <body ng-app="bubbles" ng-controller="bubblesController" style="background-color:grey">
-
-
-  <svg width="{{innerWidth}}" height="{{innerHeight}}" ng-if="bubbles">
+{{player.playerName}}
+<div ng-if="bubbles.length > 1">
+  <svg width="{{innerWidth}}" height="{{innerHeight}}" >
     <circle ng-repeat="bubble in bubbles" cx="{{bubble.posX}}" cy="{{bubble.posY}}" r="{{bubble.size}}" stroke="grey" stroke-width="2"
       fill="{{bubble.type}}" />
     <circle cx="{{player.posX}}" cy="{{player.posY}}" r="{{player.size}}" stroke="grey" stroke-width="2" fill="{{player.type}}"
     />
     <text x="{{player.posX - player.size}}" y="{{player.posY - player.size}}" font-family="Verdana" font-size="12" fill="black" > {{player.playerName}} </text>
   </svg>
+</div>
+
 </body>
 
 </html>
