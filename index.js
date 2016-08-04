@@ -41,6 +41,12 @@ io.on('connection', function (socket) {
         console.log('user disconnected');
         users = users - 1 ;
     });
+
+    socket.on('newPlayer', function(data){
+        bubbles.push(data);
+        socket.broadcast.emit('newBubble', data);
+    });
+
     socket.on('new-message', function (params) {
         socket.broadcast.emit('messages', params.content);
     });

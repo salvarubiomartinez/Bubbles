@@ -7,6 +7,8 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
 
     $scope.innerWidth = window.innerWidth - 20;
     $scope.innerHeight = window.innerHeight - 20;
+    $scope.bubbles;
+    $scope.player;
 
     socket.on('numberOfUsers', function (data) {
         console.log("users " + data);
@@ -14,6 +16,8 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
             $scope.bubbles = createBubbles();
             socket.emit('sendBubbles', $scope.bubbles);
         }
+        $scope.player = createPlayer();
+        socket.emit('newPlayer', $scope.player);
         $scope.$digest();
     })
 
@@ -22,6 +26,11 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         $scope.$digest(); 
         //console.log("AllBubbles: " + data);
     });
+
+    socket.on('newBubble', function (data){
+        $scope.bubbles.push(data);
+        $scope.$digest();
+    })
 
     function Bubble(size, type) {
         this.id;
@@ -45,6 +54,13 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
             type = !type;
         }
         return bubbles;
+    };
+
+    var createPlayer = _ =>{
+        var player = new Bubble(10, "blue");
+        var playerName = window.prompt("Nombre de jugaor?");
+        player.playerName = playerName != null ? playerName : "Desconocido";
+        return player;
     };
 
     $scope.move = index => {
