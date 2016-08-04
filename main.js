@@ -2,30 +2,11 @@
 
 var socket = io.connect('http://localhost:3000', { 'forceNew': true });
 
-//socket.on('messages', function (data) {
-//    console.log(data);
-//    var texto = document.getElementById("texto");
-//    var t = document.createTextNode(data + '</br>');
-//    texto.appendChild(t);
-//});
-
-function envia() {
-    var mensaje = document.getElementById('mensaje').value;
-    socket.emit('new-message', { content: mensaje });
-}
-
 var bubbles = angular.module('bubbles', []);
 var bubblesController = bubbles.controller('bubblesController', ['$scope', function ($scope) {
 
-    socket.on('messages', function (data) {
-        $scope.bubbles.forEach(function (element) {
-            element.x = element.x + 15;
-        });
-        $scope.$digest();
-    });
-
-    $scope.innerWidth = window.innerWidth;
-    $scope.innerHeight = window.innerHeight;
+    $scope.innerWidth = window.innerWidth - 20;
+    $scope.innerHeight = window.innerHeight - 20;
 
     socket.on('numberOfUsers', function (data) {
         console.log("users " + data);
@@ -36,10 +17,13 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         $scope.$digest();
     })
 
-    socket.on('AllBubbles', data => { $scope.bubbles = data; $scope.$digest(); console.log("AllBubbles: " + data); });
+    socket.on('AllBubbles', data => {
+        $scope.bubbles = data; 
+        $scope.$digest(); 
+        //console.log("AllBubbles: " + data);
+    });
 
-
-    function Star(size, type) {
+    function Bubble(size, type) {
         this.id;
         this.posX = Math.floor(Math.random() * window.innerWidth);
         this.posY = Math.floor(Math.random() * window.innerHeight);
@@ -52,18 +36,16 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
 
     var createBubbles = _ => {
         var bubbles = [];
-        var numberOfStars = 20;
+        var numberOfBubbles = 20;
         var type = true;
-        for (var i = 0; i < numberOfStars; i++) {
+        for (var i = 0; i < numberOfBubbles; i++) {
             var size = 5 + Math.floor(Math.random() * 30);
-            var star = new Star(size, (type) ? "red" : "orange");
-            bubbles.push(star);
+            var bubble = new Bubble(size, (type) ? "red" : "orange");
+            bubbles.push(bubble);
             type = !type;
         }
         return bubbles;
     };
-
-    $scope.hola = "pepepe";
 
     $scope.move = index => {
         this.bubbles.map((element, index) => {
@@ -74,10 +56,5 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         console.log(index);
         this.bubbles[index].x = this.bubbles[index].x + 5;
     };
-    $scope.enviar = a => {
-        $scope.bubbles.forEach(function (element) {
-            element.x = element.x + 5;
-        }, this);
-        socket.emit('new-message', { content: "mensaje" });
-    };
+
 }]);
