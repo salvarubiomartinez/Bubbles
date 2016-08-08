@@ -10,6 +10,7 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
     $scope.bubbles;
     $scope.player;
     var endGame;
+    var pepe = [];
 
     socket.on('numberOfUsers', function (data) {
         console.log("users " + data);
@@ -21,7 +22,7 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         socket.emit('newPlayer', $scope.player);
         $scope.$digest();
         updatePlayer();
-    })
+    });
 
     socket.on('AllBubbles', data => {
         $scope.bubbles = data;
@@ -33,7 +34,7 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         $scope.bubbles.push(data);
         console.log("new bubble : " + JSON.stringify(data));
         $scope.$digest();
-    })
+    });
 
     socket.on('getUpdateBubble', function (data) {
         var index = $scope.bubbles.map((element, index) => {
@@ -43,7 +44,7 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         }).find(a => a != null);
         $scope.bubbles[index] = data;
         $scope.$digest();
-    })
+    });
 
     function updatePlayer() {
         var speed;
