@@ -10,9 +10,6 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
     $scope.bubbles = [];
     $scope.player;
     var endGame;
-    var pepe = [];
-
-
 
     socket.on('numberOfUsers', function (data) {
         console.log("users " + data);
@@ -39,19 +36,15 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
     });
 
     socket.on('getUpdateBubble', function (data) {
-        var index = $scope.bubbles.map((element, index) => {
-            if (element.id === data.id) {
-                return index;
-            } else return null;
-        }).find(a => a != null);
+        var index = getIndexById(data.id);
         $scope.bubbles[index] = data;
         $scope.$digest();
     });
 
-    socket.on('deleteBubble', function (bubbleId) {
-        var index = getIndexById(bubbleId);
-        $scope.bubbles.splice(bubbleId, 1);
-    });
+//    socket.on('deleteBubble', function (bubbleId) {
+//        var index = getIndexById(bubbleId);
+//        $scope.bubbles.splice(bubbleId, 1);
+//    });
 
     function getIndexById(id) {
         return $scope.bubbles.map((element, index) => {
@@ -61,9 +54,9 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         }).find(a => a != null);
     }
 
-    function deleteBubble(bubbleId) {
-        socket.emit('deleteBubbleSend', bubbleId);
-    }
+//    function deleteBubble(bubbleId) {
+//        socket.emit('deleteBubbleSend', bubbleId);
+//    }
 
     $scope.changeDirection = function () {
         var player = $scope.player;
@@ -133,12 +126,9 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
                             if (player.size > 0) {
                                 player.size--;
                                 item.size++;
-                            }
-                            
+                            }                       
                         }
                         socket.emit('updateBubble', item);
-                        //$scope.bubbles.splice(index, 1);
-                        //deleteBubble(item.id);
                     }
                 }
             );
@@ -192,16 +182,6 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         player.playerName = playerName != null ? playerName : "Desconocido";
         player.id = id;
         return player;
-    };
-
-    $scope.move = index => {
-        this.bubbles.map((element, index) => {
-            if (element.id === id) {
-                return index;
-            } else return null;
-        }).find(a => a != null);
-        console.log(index);
-        this.bubbles[index].x = this.bubbles[index].x + 5;
     };
 
 }]);

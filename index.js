@@ -59,11 +59,6 @@ io.on('connection', function (socket) {
          if (index){
             bubbles[index] = data;
          }
-
-        // console.log('updateBubble : '+ data);
-    });
-    socket.on('new-message', function (params) {
-        socket.broadcast.emit('messages', params.content);
     });
 
     function getIndexById(id) {
@@ -74,11 +69,11 @@ io.on('connection', function (socket) {
         }).find(a => a != null);
     }
 
-    socket.on('deleteBubbleSend', function(bubbleId){
-        var index = getIndexById(bubbleId);
-        this.bubbles.splice(index,1);
-        socket.broadcast.emit('deleteBubble', bubbleId);
-    });
+ //   socket.on('deleteBubbleSend', function(bubbleId){
+ //       var index = getIndexById(bubbleId);
+ //       this.bubbles.splice(index,1);
+ //       socket.broadcast.emit('deleteBubble', bubbleId);
+ //   });
 
 });
 
