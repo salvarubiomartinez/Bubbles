@@ -55,9 +55,29 @@ io.on('connection', function (socket) {
 
     socket.on('updateBubble', function(data){
          socket.broadcast.emit('getUpdateBubble', data);
+         var index = getIndexById(data.id);
+         if (index){
+            bubbles[index] = data;
+         }
+
+        // console.log('updateBubble : '+ data);
     });
     socket.on('new-message', function (params) {
         socket.broadcast.emit('messages', params.content);
+    });
+
+    function getIndexById(id) {
+        return bubbles.map((element, index) => {
+            if (element.id === id) {
+                return index;
+            } else return null;
+        }).find(a => a != null);
+    }
+
+    socket.on('deleteBubbleSend', function(bubbleId){
+        var index = getIndexById(bubbleId);
+        this.bubbles.splice(index,1);
+        socket.broadcast.emit('deleteBubble', bubbleId);
     });
 
 });

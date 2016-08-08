@@ -12,12 +12,12 @@
 <body ng-app="bubbles" ng-controller="bubblesController" style="background-color:grey">
   {{player.playerName}}
   <div ng-if="bubbles.length > 1" ng-click="changeDirection()">
-    <svg width="{{innerWidth}}" height="{{innerHeight}}">
-      <circle ng-repeat="bubble in bubbles" cx="{{bubble.posX}}" cy="{{bubble.posY}}" r="{{bubble.size}}" stroke="grey" stroke-width="2"
+    <svg ng-width="{{innerWidth}}" ng-height="{{innerHeight}}">
+      <circle ng-repeat="bubble in bubbles track by $index" ng-cx="{{bubble.posX}}" ng-cy="{{bubble.posY}}" ng-r="{{bubble.size}}" stroke="grey" stroke-width="2"
         fill="{{bubble.type}}" />
-      <circle cx="{{player.posX}}" cy="{{player.posY}}" r="{{player.size}}" stroke="grey" stroke-width="2" fill="green"
+      <circle ng-cx="{{player.posX}}" ng-cy="{{player.posY}}" ng-r="{{player.size}}" stroke="grey" stroke-width="2" fill="green"
       />
-      <text x="{{player.posX - player.size}}" y="{{player.posY - player.size}}" font-family="Verdana" font-size="12" fill="black">
+      <text ng-x="{{player.posX - player.size}}" ng-y="{{player.posY - player.size}}" font-family="Verdana" font-size="12" fill="black">
       {{player.playerName}} </text>
     </svg>
   </div>

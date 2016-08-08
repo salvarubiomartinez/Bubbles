@@ -7,7 +7,7 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
 
     $scope.innerWidth = window.innerWidth - 20;
     $scope.innerHeight = window.innerHeight - 20;
-    $scope.bubbles;
+    $scope.bubbles = [];
     $scope.player;
     var endGame;
     var pepe = [];
@@ -48,21 +48,38 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         $scope.$digest();
     });
 
+    socket.on('deleteBubble', function (bubbleId) {
+        var index = getIndexById(bubbleId);
+        $scope.bubbles.splice(bubbleId, 1);
+    });
+
+    function getIndexById(id) {
+        return $scope.bubbles.map((element, index) => {
+            if (element.id === id) {
+                return index;
+            } else return null;
+        }).find(a => a != null);
+    }
+
+    function deleteBubble(bubbleId) {
+        socket.emit('deleteBubbleSend', bubbleId);
+    }
+
     $scope.changeDirection = function () {
         var player = $scope.player;
         console.log("giro");
         if (player.left && player.top) {
             player.left = false;
         } else
-        if (!player.left && player.top) {
-            player.top = false;
-        } else
-        if (!player.left && !player.top) {
-            player.left = true;
-        } else
-        if (player.left && !player.top) {
-            player.top = true;
-        }
+            if (!player.left && player.top) {
+                player.top = false;
+            } else
+                if (!player.left && !player.top) {
+                    player.left = true;
+                } else
+                    if (player.left && !player.top) {
+                        player.top = true;
+                    }
     };
 
     function updatePlayer() {
@@ -101,6 +118,32 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
             player.top = true;
             ;
         }
+        if ($scope.bubbles.length > 0) {
+            $scope.bubbles.forEach(
+                (item, index) => {
+                    if (crash(item, player)) {
+                        if (player.size >= item.size) {
+                            
+                            if (item.size > 0) {
+                                player.size++;
+                                item.size--;
+                            }
+                            //$scope.bubbles[index].size--;
+                        } else {
+                            if (player.size > 0) {
+                                player.size--;
+                                item.size++;
+                            }
+                            
+                        }
+                        socket.emit('updateBubble', item);
+                        //$scope.bubbles.splice(index, 1);
+                        //deleteBubble(item.id);
+                    }
+                }
+            );
+        }
+
 
         socket.emit('updateBubble', player);
         $scope.player = player;
@@ -108,7 +151,16 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         endGame = setTimeout(updatePlayer, 50);
     }
 
-
+    function crash(bubble1, bubble2) {
+        var r1 = bubble1.size / 2;
+        var r2 = bubble2.size / 2;
+        var distance = parseInt(Math.sqrt((Math.pow((bubble1.posX - bubble2.posX), 2) + Math.pow((bubble1.posY - bubble2.posY), 2))));
+        if (distance < (r1 + r2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     function Bubble(size, type) {
         this.id;
@@ -153,3 +205,15 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
     };
 
 }]);
+
+
+angular.forEach(['cx', 'cy', 'width', 'height', 'r'], function (name) {
+    var ngName = 'ng' + name[0].toUpperCase() + name.slice(1);
+    bubbles.directive(ngName, function () {
+        return function (scope, element, attrs) {
+            attrs.$observe(ngName, function (value) {
+                attrs.$set(name, value);
+            });
+        };
+    });
+});
