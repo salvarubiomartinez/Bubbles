@@ -12,6 +12,8 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
     var endGame;
     var pepe = [];
 
+
+
     socket.on('numberOfUsers', function (data) {
         console.log("users " + data);
         if (data < 1) {
@@ -45,6 +47,23 @@ var bubblesController = bubbles.controller('bubblesController', ['$scope', funct
         $scope.bubbles[index] = data;
         $scope.$digest();
     });
+
+    $scope.changeDirection = function () {
+        var player = $scope.player;
+        console.log("giro");
+        if (player.left && player.top) {
+            player.left = false;
+        } else
+        if (!player.left && player.top) {
+            player.top = false;
+        } else
+        if (!player.left && !player.top) {
+            player.left = true;
+        } else
+        if (player.left && !player.top) {
+            player.top = true;
+        }
+    };
 
     function updatePlayer() {
         var speed;
